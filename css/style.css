@@ -382,7 +382,7 @@ a:focus {
 }
 
 .slider_section .detail-box h1 {
-  font-size: 3rem;
+
   font-family: "Andale Mono";
 }
 
@@ -1104,5 +1104,8 @@ a:focus {
 .img-box:hover .hover-text {
   display: block;
 }
+
+
+
 
 /*# sourceMappingURL=style.css.map */
