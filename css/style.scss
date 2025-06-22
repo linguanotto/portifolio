@@ -1088,3 +1088,14 @@ a:focus {
 .close-btn:hover {
   color: white;
 }
+
+.slider_section {
+  height: 100vh; /* ocupa toda a altura da tela */
+  overflow: hidden;
+}
+
+.img-box img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover; /* faz a imagem "cortar" e preencher sem deformar */
+}
