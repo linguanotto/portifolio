@@ -2,473 +2,367 @@
 <html lang="pt-BR">
 
 <head>
-  <!-- Basic -->
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- Mobile Metas -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Site Metas -->
-  <meta name="keywords" content="" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flavio Linguanotto</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --text: #e8e8e8;
+      --glass: #0006;
+      --accent: #7cf3c6;
+      /* cor da borda das caixas (azul escuro) */
+      --cardBorder: #103a8a;
+      /* ajuste aqui se quiser outro tom */
+      --cardGlow: #103a8a55;
+      /* leve brilho */
+    }
 
-  <!-- slider stylesheet -->
-  <link rel="stylesheet" type="text/css"
-    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+    * { box-sizing: border-box }
+    html, body { height: 100% }
 
-  <!-- bootstrap core css -->
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial
+    }
 
-  <!-- Custom styles for this template -->
-  <link href="css/style.css" rel="stylesheet" />
-  <!-- responsive style -->
-  <link href="css/responsive.css" rel="stylesheet" />
+    /* ===== FUNDO ===== */
+    #bg-pattern { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    #bg-pattern::after{
+      content: ""; position: absolute; inset: -20%; transform: rotate(45deg);
+      background: url('imagens/muitoMaisQueRobos.png') repeat; background-size: 220px 220px; opacity: .08;
+    }
+
+    /* ===== CAPA ===== */
+    #bg-text{
+      position: fixed; inset: 0; display: grid; place-items: center; font-weight: 800;
+      font-size: clamp(40px, 8vw, 120px); color: #9c9c9c; z-index: 1; text-align: center;
+      text-shadow: 0 4px 30px #0009; pointer-events: none;
+    }
+
+    #canvas-wrap { position: fixed; inset: 0; z-index: 2 }
+    #status-wrap{
+      position: fixed; left: 16px; top: 16px; z-index: 3; background: #0008; color: #fff;
+      padding: 8px 10px; border-radius: 10px; font-size: 12px; backdrop-filter: blur(6px); border: 1px solid #ffffff14;
+    }
+
+    /* ===== DOCK ===== */
+    #dock{
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 3; padding: 16px 18px 22px;
+      background: linear-gradient(180deg, transparent, #0006 35%, #000b); display: flex; justify-content: center;
+    }
+    .dock-inner{
+      display: flex; gap: 10px; padding: 10px; border: 1px solid #ffffff14; background: var(--glass);
+      backdrop-filter: blur(10px); border-radius: 16px; max-width: min(1100px, 92vw); overflow-x: auto;
+    }
+    .pill{
+      appearance: none; border: none; outline: none; cursor: pointer; padding: 10px 16px; border-radius: 999px;
+      background: linear-gradient(180deg, #121212, #0e0e0e); color: #e6e6e6; font-size: 14px;
+      border: 1px solid #1f1f1f; box-shadow: inset 0 1px 0 #ffffff08, 0 4px 14px #0008;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, color .15s ease; white-space: nowrap;
+    }
+    .pill:hover{ transform: translateY(-1px); border-color: #2b2b2b; box-shadow: inset 0 1px 0 #ffffff10, 0 8px 24px #000a; }
+    .pill:focus-visible{ box-shadow: 0 0 0 2px #000, 0 0 0 3px var(--accent); }
+    .pill.active{ color: #fff; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset, 0 10px 30px #000c; }
+
+    /* ===== CONTEÚDO ===== */
+    main { position: relative; z-index: 2; margin-top: 100vh; }
+    section{
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 120px 20px 220px; scroll-margin-top: 12vh;
+    }
+
+    /* caixas com borda azul escuro */
+    .card{
+      max-width: min(1000px, 92vw);
+      background: #0f0f10cc;
+      border: 1.5px solid var(--cardBorder);
+      border-radius: 18px;
+      box-shadow: 0 0 0 1px var(--cardBorder) inset, 0 16px 40px #000a, 0 0 18px var(--cardGlow);
+      backdrop-filter: blur(20px);
+      padding: 28px;
+    }
+    .card h2{ margin: 0 0 10px; font-size: clamp(22px, 4vw, 36px); }
+    .card p{ margin: 0; line-height: 1.65; color: #d6d6d6; font-size: 25px; }
+
+    /* ===== GRID DE PROJETOS (3 por linha, quadrados, cantos arredondados) ===== */
+    .projects-grid{
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .project-card{
+      position: relative;
+      aspect-ratio: 1/1;              /* quadrado */
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1.5px solid var(--cardBorder);
+      box-shadow: 0 0 0 1px var(--cardBorder) inset, 0 8px 24px #000a, 0 0 12px var(--cardGlow);
+      background: #0b0b0c;
+    }
+    .project-card > img{
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transform: scale(1); transition: transform .35s ease;
+      filter: saturate(1.05) contrast(1.02);
+    }
+    .project-card:hover > img{ transform: scale(1.04); }
+    .project-card:focus-within{ outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    @media (max-width: 900px){
+      .projects-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 560px){
+      .projects-grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 
 <body>
-  <div class="hero_area">
-    <!-- header section strats -->
-    <header class="header_section">
-      <div class="container-fluid">
-        <nav class="navbar navbar-expand-lg custom_nav-container d-block">
-          <div class="main_nav_menu">
-            <div class="fk_width">
-              
-            </div>
-            <a class="navbar-brand" href="index.html">
-              <span>
-                Portfólio
-              </span>
-            </a>
-          </div>
+  <div id="bg-pattern" aria-hidden="true"></div>
+  <div id="bg-text">Flavio Linguanotto</div>
+  <div id="canvas-wrap"></div>
+  <div id="status-wrap"><strong>Status:</strong> <span id="status">iniciando…</span></div>
+  <div id="dock"><div class="dock-inner" id="dockInner"></div></div>
+
+  <main>
+    <section id="inicio">
+      <div class="card">
+        <h2>Sobre</h2>
+        <p>Sou Técnico de Laboratório Didático, especializado em AR/VR, IoT e programação. Desenvolvo experiências de
+          aprendizado inovadoras, unindo tecnologia e educação para capacitar alunos e professores. Meu foco é tornar a
+          educação tecnológica acessível e prática, incentivando soluções criativas para desafios reais. Vamos conectar
+          e trocar ideias sobre inovação e ensino!</p>
       </div>
-      </nav>
-  </div>
-  </header>
-  <!-- end header section -->
+    </section>
 
-  <!-- slider section -->
-  <section class=" slider_section position-relative">
-    <div class="container-fluid">
-      <div class="row slider-row">
-        <div class="col-lg-3 offset-lg-1">
-          <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <div class="detail-box">
-                  <h1>
-                    Flavio  <br >
-                    Linguanotto
-                  </h1>
-                  <br >
-                  <p>
-                    Sou Técnico de Laboratório Didático, especializado em AR/VR, IoT e programação. Desenvolvo
-                    experiências de aprendizado inovadoras, unindo tecnologia e educação para capacitar alunos e
-                    professores. Meu foco é tornar a educação tecnológica acessível e prática, incentivando soluções
-                    criativas para desafios reais. Vamos conectar e trocar ideias sobre inovação e ensino!
-                  </p>
-                </div>
-              </div>
+    <section id="sobre">
+      <div class="card">
+        <h2>Principal Projeto Atual</h2>
+        <p>Projeto em AR.js para realidade aumentada com foco educacional, utilizando o celular para tornar o
+          aprendizado mais imersivo e atrativo. A proposta busca engajar os alunos por meio da tecnologia,
+          proporcionando uma experiência interativa que facilita a
+          assimilação de conteúdos de forma inovadora e dinâmica.
+          <a href="https://github.com/linguanotto/AR.JS" target="_blank" rel="noopener">Repositório GitHub</a>
+        </p>
+      </div>
+    </section>
 
-            </div>
+    <section id="projetos">
+      <div class="card">
+        <h2>Projetos Fatec Jacareí </h2>
+        <p>PABP's (Aprendizagem Baseada em Projetos) desenvolvidos durante minha graduação em Desenvolvimento de Software Multiplataforma pela FATEC Jacareí.</p>
 
-          </div>
+        <!-- ===== GRID 6 QUADRADOS ===== -->
+        <div class="projects-grid">
+          <a class="project-card" href="https://github.com/linguanotto/REPO1" target="_blank" rel="noopener">
+            <img src="imagens/projetos/proj1.jpg" alt="Projeto 1">
+          </a>
+          <a class="project-card" href="https://github.com/linguanotto/REPO2" target="_blank" rel="noopener">
+            <img src="imagens/projetos/proj2.jpg" alt="Projeto 2">
+          </a>
+          <a class="project-card" href="https://github.com/linguanotto/REPO3" target="_blank" rel="noopener">
+            <img src="imagens/projetos/proj3.jpg" alt="Projeto 3">
+          </a>
+          <a class="project-card" href="https://github.com/linguanotto/REPO4" target="_blank" rel="noopener">
+            <img src="imagens/projetos/proj4.jpg" alt="Projeto 4">
+          </a>
+          <a class="project-card" href="https://github.com/linguanotto/REPO5" target="_blank" rel="noopener">
+            <img src="imagens/projetos/proj5.jpg" alt="Projeto 5">
+          </a>
+          <a class="project-card" href="https://github.com/linguanotto/REPO6" target="_blank" rel="noopener">
+            <img src="imagens/projetos/proj6.jpg" alt="Projeto 6">
+          </a>
         </div>
-        <div class="col-lg-8 px-0">
-          <div class="img-box ">
-            <img src="images/slider-img1.png" alt="" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- end slider section -->
-  </div>
-
-  <!-- about section -->
-
-  <section class="about_section layout_padding">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-5">
-          <div class="detail-box">
-            <div class="heading_container">
-              <h2>
-                Principal Projeto Atual
-              </h2>
-              <p>
-                Projeto em AR.js para realidade aumentada com foco educacional, utilizando o celular 
-                para tornar o aprendizado mais imersivo e atrativo. A proposta busca engajar os alunos 
-                por meio da tecnologia, proporcionando uma experiência interativa que facilita a assimilação 
-                de conteúdos de forma inovadora e dinâmica.
-              </p>
-              <a href="https://github.com/linguanotto/AR.JS">
-                Repositório GitHub
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="img-box">
-      <div class="">
+        <!-- ===== /GRID ===== -->
 
       </div>
-      <img src="images/about-img.png" class="about-img" alt="" />
-    </div>
-  </section>
+    </section>
 
-  <!-- end about section -->
-
-  <!-- gallery section -->
-  <section class="gallery_section layout_padding-top">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-5 ml-auto">
-          <div class="heading_container">
-            <h2>
-              Projetos Fatec Jacareí
-            </h2>
-            <p>
-              ABP's (Aprendizagem Baseada em Projetos) desenvolvidos durante minha graduação em Desenvolvimento de
-              Software Multiplataforma pela FATEC Jacareí.
-            </p>
-
-          </div>
-        </div>
+    <section id="fll">
+      <div class="card">
+        <h2>FLL / OBR</h2>
+        <p>Resultados, calendários e destaques das competições.</p>
       </div>
-    </div>
-    
-    <div class="gallery_container">
-      <div class="gallery_bg">
-        <img src="images/gallery-bg.png" alt="" />
+    </section>
+
+    <section id="contato">
+      <div class="card">
+        <h2>Contato</h2>
+        <p>Formas de contato e redes sociais.</p>
       </div>
-      <div class="container">
-        <div class="gallery_box">
+    </section>
+  </main>
 
-          
-          <div class="box b1">
-            <div class="img-box">
-              <a href="https://github.com/TerraSoftwarehouse/Projeto-Treinamento-Scrum" target="_blank" rel="noopener noreferrer">
+  <script type="module">
+    import * as THREE from 'three';
+    import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+    import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 
-                
-                <img src="images/gallery-1.jpg" alt="" />
+    // Caminhos do modelo
+    const OBJ_URL = 'obj/minecraft.obj';
+    const MTL_URL = 'obj/minecraft.mtl'; // usado só se NÃO houver vertex colors
 
-                <div class="hover-text">-Projeto Treinamento Scrum 2023/01-
-                  Como Scrum Master, atuei na documentação do projeto, implementei recursos de acessibilidade no site, incluindo tradução em Libras, e contribuí ativamente no desenvolvimento do front-end.
-                </div>
-              </a>
-            </div>
-          </div>
+    const wrap = document.getElementById('canvas-wrap');
+    const statusEl = document.getElementById('status');
+    const setStatus = (s) => statusEl.textContent = s;
 
+    // Cena
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.01, 5000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMappingExposure = 1.2;
+    wrap.appendChild(renderer.domElement);
 
-          <div class="box b2">
-            <div class="img-box">
-              <a href="https://github.com/projetoPDali" target="_blank" rel="noopener noreferrer">
-                
-                <img src="images/gallery-2.jpg" alt="" />
-                <div class="hover-text"> -Projeto PDali 2023/02- Como Product Owner, fui responsável pela prototipação do site, além de atuar no desenvolvimento do banco de dados e contribuir na implementação do front-end.
-                </div>
-              </a>
-              
-            </div>
-            <div class="img-box">
-              <a href="https://github.com/TerraGeoManager/TerraGeoManager" target="_blank" rel="noopener noreferrer">
-                
-                <img src="images/gallery-3.jpg" alt="" />
-                <div class="hover-text"> -Projeto TerraGeo 2024/01- Como Product Owner, elaborei a documentação de análise de requisitos, fui responsável pela integração das bibliotecas de front-end e colaborei nos cálculos necessários para o funcionamento do dashboard. </div>
-              </a>
-              
-            </div>
-          </div>
-          <div class="box b3">
-            <div class="img-box">
-              <a href="https://github.com/noctagroup/NutriLifeDoc" target="_blank" rel="noopener noreferrer">
-                <img src="images/gallery-4.jpg" alt="" />
-                <div class="hover-text">-Projeto NutriLife 2024/02- Fui responsável pela parte de IoT do projeto, integrando um contador de passos ao aplicativo por meio do microcontrolador ESP32. </div>
-              </a>
-              
-            </div>
-            <div class="img-box">
-              <a href="google.com">
-                <img src="images/gallery-5.jpg" alt="" />
-                <div class="hover-text">Em breve novo projeto</div>
-              </a>
-              
-            </div>
-          </div>
-          <div class="box b4">
-            <div class="img-box">
-              <a href="google.com">
-                <img src="images/gallery-6.jpg" alt="" />
-                <div class="hover-text">Em breve novo projeto</div>
-              </a>
-             
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- end gallery section -->
+    scene.add(new THREE.AmbientLight(0xffffff, 0.35));
+    const dir = new THREE.DirectionalLight(0xffffff, 1.25); dir.position.set(2, 4, 3); scene.add(dir);
 
-  <!-- blog section -->
+    const objLoader = new OBJLoader();
+    const mtlLoader = new MTLLoader();
+    let modelGroup = null, model = null;
 
-  <section class="blog_section layout_padding">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-5">
-          <div class="detail-box">
-            <div class="heading_container">
-              <h2>
-                Atividades Extracurriculares
-              </h2>
-              <p>
-                Meus Projetos Extracurriculares como técnico foram desenvolvidos para ampliar minhas habilidades além da programação, fortalecendo o senso de liderança, a colaboração em equipe e a aplicação de processos.
-              </p>
-              </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="blog_container">
-      <div class="blog_bg">
-        <img src="images/gallery-bg.png" alt="" />
-      </div>
-      <div class="container">
-        <div class="blog_box">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="box b1">
-                <div class="img-box">
-                  <img src="images/blog1.jpg" alt="" />
-                </div>
-                <div class="blog-detail">
-                  <div class="blog_title">
-                    <h5>
-                      Equipe TECNOVIBE
-                    </h5>
-                    <div class="blog_post">
-                      <h6>
-                        Técnico
-                      </h6>
-                      <h6>
-                        12-2024
-                      </h6>
-                    </div>
-                  </div>
-                  <p>
-                    Assumi a equipe de robótica formada por alunos do Fundamental II da Escola SESI Mogi das Cruzes, 
-                    preparando-os para a competição FLL (FIRST LEGO League). Além do Desafio do Robô, também realizo 
-                    a mentoria no desenvolvimento do Projeto de Inovação, parte essencial da competição.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="box b2">
-                <div class="img-box">
-                  <img src="images/blog2.jpg" alt="" />
-                </div>
-                <div class="blog-detail">
-                  <div class="blog_title">
-                    <h5>
-                      Equipe HUNTERS
-                    </h5>
-                    <div class="blog_post">
-                      <h6>
-                        Técnico:
-                      </h6>
-                      <h6>
-                        01-2025
-                      </h6>
-                    </div>
-                  </div>
-                  <p>
-                    Assumi a equipe de robótica formada por alunos do Ensino Médio da Escola SESI Mogi das Cruzes, 
-                    preparando-os para a Olimpíada Brasileira de Robótica (OBR). Meu trabalho envolve o desenvolvimento 
-                    técnico da equipe, aprimoramento de estratégias e aplicação de metodologias que estimulam raciocínio lógico, criatividade e trabalho em equipe.                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    function showOBJ(obj) {
+      if (modelGroup) scene.remove(modelGroup);
+      modelGroup = new THREE.Group();
+      modelGroup.rotation.x = Math.PI / 2;
+      modelGroup.rotation.y = Math.PI;
+      modelGroup.rotation.z = Math.PI / 2;
+      modelGroup.add(obj);
+      scene.add(modelGroup);
+      model = obj;
 
-  <!-- end blog section -->
+      const box = new THREE.Box3().setFromObject(obj);
+      const ctr = box.getCenter(new THREE.Vector3()); obj.position.sub(ctr);
+      const sphere = box.getBoundingSphere(new THREE.Sphere());
+      const r = Math.max(0.0001, sphere.radius), targetR = 0.8;
+      obj.scale.multiplyScalar(targetR / r);
+      const fov = camera.fov * Math.PI / 180, dist = targetR / Math.sin(fov / 2);
+      camera.position.set(0, targetR * 0.3, dist * 1.3);
+      camera.near = Math.max(0.01, dist - targetR * 4); camera.far = dist + targetR * 10;
+      camera.updateProjectionMatrix();
+    }
 
-  <!-- client section -->
+    function applyVertexColorsIfPresent(obj) {
+      let found = false;
+      obj.traverse(o => {
+        if (o.isMesh && o.geometry && o.geometry.getAttribute('color')) {
+          o.material = new THREE.MeshStandardMaterial({
+            vertexColors: true, roughness: 0.6, metalness: 0.0
+          });
+          o.material.needsUpdate = true;
+          found = true;
+        }
+      });
+      return found;
+    }
 
-  <section class="client_section layout_padding">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-5 ml-auto">
-          <div class="heading_container">
-            <h2>
-              Hobbies 
-            </h2>
-            <p>
-              Gosto de explorar minha criatividade por meio da pintura, experimentando cores e técnicas para expressar ideias e conceitos. Além disso, sou apaixonado 
-              por fabricação digital, trabalhando com impressão 3D e corte a laser para transformar projetos em realidade. Essas atividades me permitem unir arte e tecnologia, 
-              explorando novas possibilidades de criação e inovação.    
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="client_container">
-      <div class="client_bg">
-        <img src="images/gallery-bg.png" alt="" />
-      </div>
-      <div class="container">
-        <div class="client_box">
-          <div class="row">
-            <div class="col-lg-6">
-              <div class="box b1">
-                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-                  <div class="carousel-inner">
-                    <div class="carousel-item active">
-                      <div class="client_content-box layout_padding">
-                        <div class="img-box">
-                          <img src="images/cliemt1.png" alt="" />
-                        </div>
-                        <div class="detail-box">
-                          <h4>
-                            Pintura
-                          </h4>
-                          <p>
-                            A pintura é uma forma de expressão criativa que me permite explorar cores, formas e técnicas para dar vida a ideias. É uma atividade que desenvolve paciência, percepção visual e sensibilidade artística.
+    async function loadOBJPreferVertexColors(objUrl, mtlUrl) {
+      setStatus('carregando OBJ…');
+      objLoader.load(
+        objUrl,
+        async (objNoMtl) => {
+          const hasVertexColors = applyVertexColorsIfPresent(objNoMtl);
+          if (hasVertexColors) {
+            console.log('↪ usando CORES POR VÉRTICE (vertexColors).');
+            showOBJ(objNoMtl);
+            setStatus('modelo exibido (vertex colors)');
+            return;
+          }
+          console.log('↪ sem vertex colors — tentando MTL…');
+          try {
+            const head = await fetch(mtlUrl, { method: 'HEAD', cache: 'no-cache' });
+            if (!head.ok) throw new Error('MTL HTTP ' + head.status);
+            mtlLoader.setResourcePath(new URL('.', new URL(mtlUrl, location.href)).toString());
+            setStatus('carregando MTL…');
+            mtlLoader.load(mtlUrl, (materials) => {
+              materials.preload();
+              Object.values(materials.materials).forEach(mat => {
+                if (mat.map) mat.map.colorSpace = THREE.SRGBColorSpace;
+                else mat.color?.offsetHSL?.(0, +0.12, +0.04);
+                mat.needsUpdate = true;
+              });
+              objLoader.setMaterials(materials);
+              objLoader.load(objUrl, (objWithMtl) => {
+                showOBJ(objWithMtl);
+                setStatus('modelo exibido (MTL)');
+              }, undefined, (e) => { console.warn('OBJ+MTL falhou:', e); showOBJ(objNoMtl); setStatus('modelo exibido (sem MTL)'); });
+            }, undefined, (e) => { console.warn('MTL não carregou:', e); showOBJ(objNoMtl); setStatus('modelo exibido (sem MTL)'); });
+          } catch (e) {
+            console.warn('MTL indisponível:', e.message);
+            showOBJ(objNoMtl);
+            setStatus('modelo exibido (sem MTL)');
+          }
+        },
+        undefined,
+        (err) => { console.error('Falha ao carregar OBJ:', err); setStatus('erro ao carregar OBJ'); }
+      );
+    }
 
+    // animação leve com mouse
+    const target = { x: 0, y: 0 };
+    addEventListener('mousemove', e => {
+      const nx = (e.clientX / innerWidth) * 2 - 1, ny = -(e.clientY / innerHeight) * 2 + 1;
+      target.y = Math.max(-0.8, Math.min(0.8, nx * 0.6));
+      target.x = Math.max(-0.8, Math.min(0.8, ny * 0.3));
+    });
+    (function animate() {
+      requestAnimationFrame(animate);
+      if (model) {
+        model.rotation.y += (target.y - model.rotation.y) * 0.08;
+        model.rotation.x += (target.x - model.rotation.x) * 0.08;
+      }
+      renderer.render(scene, camera);
+    })();
+    addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
 
-                          </p>
-                          <img src="images/quote.png" alt="" />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="carousel-item">
-                      <div class="client_content-box layout_padding">
-                        <div class="img-box">
-                          <img src="images/cliemt2.png" alt="" />
-                        </div>
-                        <div class="detail-box">
-                          <h4>
-                            Impressão 3D
-                          </h4>
-                          <p>
-                            Com a impressão 3D, posso transformar conceitos digitais em objetos físicos, 
-                            explorando design, modelagem e fabricação. Esse hobby une criatividade e tecnologia, permitindo a criação de protótipos e peças funcionais.
-                          </p>
-                          <img src="images/quote.png" alt="" />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="carousel-item">
-                      <div class="client_content-box layout_padding">
-                        <div class="img-box">
-                          <img src="images/cliemt3.png" alt="" />
-                        </div>
-                        <div class="detail-box">
-                          <h4>
-                            Corte a Laser
-                          </h4>
-                          <p>
-                            O corte a laser é uma ferramenta poderosa para criação de projetos detalhados e personalizados. Com ele, trabalho com diferentes 
-                            materiais para desenvolver peças precisas, unindo design digital e fabricação com alta qualidade.
-                          </p>
-                          <img src="images/quote.png" alt="" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                    <span class="sr-only">Previous</span>
-                  </a>
-                  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                    <span class="sr-only">Next</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="box b2">
-                <div class="camera_img-box">
-                  <img src="images/camera.png" alt="" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    // dock (scroll suave)
+    const NAV_ITEMS = [
+      { id: 'inicio', label: 'Início' },
+      { id: 'sobre', label: 'Sobre' },
+      { id: 'projetos', label: 'Projetos' },
+      { id: 'fll', label: 'FLL / OBR' },
+      { id: 'contato', label: 'Contato' }
+    ];
+    const dockInner = document.getElementById('dockInner');
+    function smoothScrollTo(targetY, duration = 900) {
+      const startY = window.scrollY, delta = targetY - startY, t0 = performance.now();
+      function ease(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
+      function step(t1) {
+        const e = Math.min(1, (t1 - t0) / duration), k = ease(e);
+        window.scrollTo(0, startY + delta * k); if (e < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    NAV_ITEMS.forEach(({ id, label }) => {
+      const btn = document.createElement('button'); btn.className = 'pill'; btn.textContent = label;
+      btn.onclick = () => {
+        const el = document.getElementById(id); if (!el) return;
+        const y = window.scrollY + el.getBoundingClientRect().top - (innerHeight * 0.10);
+        smoothScrollTo(y, 900);
+      };
+      dockInner.appendChild(btn);
+    });
 
-  <!-- end client section -->
-
-  <!-- info section -->
-
-  <section class="info_section ">
-    <div class="info_container layout_padding-top">
-      <div class="container">
-        <div class="heading_container">
-          
-        </div>
-        <div class="info_main">
-          <div class="row">
-            <div class="col-md-4 col-lg-3">
-              <div class="info_contact ">
-                <a href="#" class="link-box">
-                  
-                  
-                </a>
-                <a href="#" class="link-box">
-                  <div class="img-box">
-                    <img src="images/mail.png" alt="" />
-                  </div>
-                  <div class="detail-box">
-                    <h6>
-                      flavio.linguanotto@fatec.sp.gov.br
-                    </h6>
-                  </div>
-                </a>
-                <a href="#" class="link-box">
-                  
-                  <div class="detail-box">
-                  
-                  </div>
-                </a>
-              </div>
-            </div>
-            
-            <div class="col-md-6 ">
-              <div class="social_box">
-              
-                <a href="https://www.linkedin.com/in/flavio-linguanotto-b587361a4/?trk=people_directory&originalSubdomain=br">
-                  <img src="images/linkedin.png" alt="" />
-                </a>
-                <a href="https://www.instagram.com/flavio_linguanotto?igsh=YTc1cnRpMmQ5N2Zi">
-                  <img src="images/instagram.png" alt="" />
-                </a>
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- end info section -->
-
- 
-
-  <script src="js/jquery-3.4.1.min.js"></script>
-  <script src="js/bootstrap.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-  <script src="js/custom.js"></script>
+    // inicia
+    loadOBJPreferVertexColors(OBJ_URL, MTL_URL);
+  </script>
 </body>
-
 </html>
